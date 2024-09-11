@@ -49,8 +49,69 @@ func TestCache(t *testing.T) {
 		require.Nil(t, val)
 	})
 
+	t.Run("clear", func(t *testing.T) {
+		c := NewCache(2)
+		wasInCache := c.Set("a", 100)
+		require.False(t, wasInCache)
+		wasInCache = c.Set("b", 101)
+		require.False(t, wasInCache)
+
+		val, ok := c.Get("a")
+		require.True(t, ok)
+		require.Equal(t, 100, val)
+		val, ok = c.Get("b")
+		require.True(t, ok)
+		require.Equal(t, 101, val)
+
+		c.Clear()
+
+		val, ok = c.Get("a")
+		require.False(t, ok)
+		require.Nil(t, val)
+		val, ok = c.Get("b")
+		require.False(t, ok)
+		require.Nil(t, val)
+	})
+
 	t.Run("purge logic", func(t *testing.T) {
-		// Write me
+		c := NewCache(3)
+		wasInCache := c.Set("a", 1)
+		require.False(t, wasInCache)
+		wasInCache = c.Set("b", 2)
+		require.False(t, wasInCache)
+		wasInCache = c.Set("c", 3)
+		require.False(t, wasInCache)
+
+		wasInCache = c.Set("d", 4)
+		require.False(t, wasInCache)
+
+		val, ok := c.Get("a")
+		require.False(t, ok)
+		require.Nil(t, val)
+	})
+
+	t.Run("increased element index", func(t *testing.T) {
+		c := NewCache(3)
+		wasInCache := c.Set("a", 1)
+		require.False(t, wasInCache)
+		wasInCache = c.Set("b", 2)
+		require.False(t, wasInCache)
+		wasInCache = c.Set("c", 3)
+		require.False(t, wasInCache)
+
+		val, ok := c.Get("a")
+		require.True(t, ok)
+		require.Equal(t, 1, val)
+
+		wasInCache = c.Set("d", 4)
+		require.False(t, wasInCache)
+
+		val, ok = c.Get("b")
+		require.False(t, ok)
+		require.Nil(t, val)
+		val, ok = c.Get("a")
+		require.True(t, ok)
+		require.Equal(t, 1, val)
 	})
 }
 
