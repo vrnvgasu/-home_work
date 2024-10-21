@@ -15,6 +15,15 @@ var (
 )
 
 func Copy(fromPath, toPath string, offset, limit int64) error {
+	fileInfo, err := os.Lstat(fromPath)
+	if err != nil {
+		return fmt.Errorf("lstat: %w", err)
+	}
+	fileInfo.Size()
+	if !fileInfo.Mode().IsRegular() {
+		return ErrUnsupportedFile
+	}
+
 	inFile, err := os.OpenFile(fromPath, os.O_RDONLY, os.ModePerm)
 	if err != nil {
 		return fmt.Errorf("open inFile: %w", err)
@@ -27,19 +36,14 @@ func Copy(fromPath, toPath string, offset, limit int64) error {
 	}
 	defer AppClose(outFile)
 
-	stat, err := inFile.Stat()
-	if err != nil {
-		return fmt.Errorf("stat inFile: %w", err)
-	}
-
-	if err = checkOffset(offset, stat.Size()); err != nil {
+	if err = checkOffset(offset, fileInfo.Size()); err != nil {
 		return fmt.Errorf("checkOffset: %w", err)
 	}
 	if _, err = inFile.Seek(offset, 0); err != nil {
 		return fmt.Errorf("seek inFile: %w", err)
 	}
 
-	if err = copyFile(inFile, outFile, prepareLimit(limit, stat.Size())); err != nil {
+	if err = copyFile(inFile, outFile, prepareLimit(limit, fileInfo.Size())); err != nil {
 		return fmt.Errorf("copyFile: %w", err)
 	}
 
