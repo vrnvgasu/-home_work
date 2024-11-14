@@ -62,4 +62,9 @@ func TestTelnetClient(t *testing.T) {
 
 		wg.Wait()
 	})
+
+	t.Run("err connect", func(t *testing.T) {
+		telnetClient := NewTelnetClient("dummy", time.Second, io.NopCloser(&bytes.Buffer{}), &bytes.Buffer{})
+		require.Error(t, telnetClient.Connect())
+	})
 }
