@@ -1,0 +1,16 @@
+goos: linux
+goarch: amd64
+pkg: github.com/vrnvgasu/home_work/hw10_program_optimization
+cpu: Intel(R) Core(TM) Ultra 7 155H
+BenchmarkGetDomainStat-22       	      87	  13421750 ns/op	11371438 B/op	  623188 allocs/op
+BenchmarkGetDomainStat-22       	      87	  13163098 ns/op	11371483 B/op	  623188 allocs/op
+BenchmarkGetDomainStat-22       	      69	  14494623 ns/op	11371440 B/op	  623188 allocs/op
+BenchmarkGetDomainStat-22       	      74	  14013247 ns/op	11371319 B/op	  623188 allocs/op
+BenchmarkGetDomainStat-22       	      88	  13838878 ns/op	11371193 B/op	  623187 allocs/op
+BenchmarkGetDomainStatOld-22    	      19	  54082774 ns/op	316816566 B/op	 2845415 allocs/op
+BenchmarkGetDomainStatOld-22    	      20	  53317827 ns/op	316791493 B/op	 2845412 allocs/op
+BenchmarkGetDomainStatOld-22    	      22	  54158116 ns/op	316778738 B/op	 2845411 allocs/op
+BenchmarkGetDomainStatOld-22    	      20	  53287227 ns/op	316850800 B/op	 2845417 allocs/op
+BenchmarkGetDomainStatOld-22    	      20	  52741547 ns/op	316820996 B/op	 2845414 allocs/op
+PASS
+ok  	github.com/vrnvgasu/home_work/hw10_program_optimization	45.647s

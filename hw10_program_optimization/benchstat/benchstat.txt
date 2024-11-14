@@ -1,0 +1,24 @@
+goos: linux
+goarch: amd64
+pkg: github.com/vrnvgasu/home_work/hw10_program_optimization
+cpu: Intel(R) Core(TM) Ultra 7 155H
+                    │ benchstat/old.txt │          benchstat/new.txt          │
+                    │      sec/op       │    sec/op     vs base               │
+GetDomainStat-22           53.01m ± ∞ ¹   13.84m ± ∞ ¹  -73.89% (p=0.008 n=5)
+GetDomainStatOld-22                       53.32m ± ∞ ¹
+geomean                    53.01m         27.16m        -73.89%
+¹ need >= 6 samples for confidence interval at level 0.95
+
+                    │ benchstat/old.txt │          benchstat/new.txt           │
+                    │       B/op        │     B/op       vs base               │
+GetDomainStat-22         302.13Mi ± ∞ ¹   10.84Mi ± ∞ ¹  -96.41% (p=0.008 n=5)
+GetDomainStatOld-22                       302.1Mi ± ∞ ¹
+geomean                   302.1Mi         57.24Mi        -96.41%
+¹ need >= 6 samples for confidence interval at level 0.95
+
+                    │ benchstat/old.txt │          benchstat/new.txt          │
+                    │     allocs/op     │  allocs/op    vs base               │
+GetDomainStat-22          2845.4k ± ∞ ¹   623.2k ± ∞ ¹  -78.10% (p=0.008 n=5)
+GetDomainStatOld-22                       2.845M ± ∞ ¹
+geomean                    2.845M         1.332M        -78.10%
+¹ need >= 6 samples for confidence interval at level 0.95
