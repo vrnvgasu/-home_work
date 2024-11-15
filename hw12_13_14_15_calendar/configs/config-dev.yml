@@ -1,0 +1,12 @@
+logger:
+  level: DEBUG
+
+psql:
+  dsn: "host=localhost port=10905 user=user password=qwerty dbname=otus_calendar sslmode=disable"
+  migration: migrations
+
+dbType: sql
+
+server:
+  port: 8090
+  host: localhost
