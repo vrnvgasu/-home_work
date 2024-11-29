@@ -5,8 +5,12 @@ psql:
   dsn: "host=localhost port=10905 user=user password=qwerty dbname=otus_calendar sslmode=disable"
   migration: migrations
 
-dbType: sql
+dbType: memory
 
 server:
   port: 8090
+  host: localhost
+
+grpsServer:
+  port: 50051
   host: localhost

@@ -1,7 +1,37 @@
 syntax = "proto3";
 
 package event;
+option go_package = "./;pb";
+
+import "google/protobuf/timestamp.proto";
+
+service Calendar {
+  rpc Add (Event) returns (Event) {}
+  rpc Update (Event) returns (Event) {}
+  rpc List (Period) returns (EventList) {}
+}
 
 message Event {
-    // TODO
+  int64 id = 1;
+  string title = 2;
+  google.protobuf.Timestamp startAt = 3;
+  google.protobuf.Timestamp endAt = 4;
+  string description = 5;
+  int64 ownerId = 6;
+  int64 sendBefore = 7;
+}
+
+message EventList {
+  repeated Event events = 1;
+}
+
+message Period {
+  google.protobuf.Timestamp start = 1;
+  Duration duration = 2;
+}
+
+enum Duration {
+  DURATION_DAY = 0;
+  DURATION_WEEK = 1;
+  DURATION_MONTH = 2;
 }

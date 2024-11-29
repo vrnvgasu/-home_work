@@ -21,13 +21,19 @@ var Cfg *Config
 // Организация конфига в main принуждает нас сужать API компонентов, использовать
 // при их конструировании только необходимые параметры, а также уменьшает вероятность циклической зависимости.
 type Config struct {
-	Logger LoggerConf `yaml:"logger"`
-	PSQL   PSQLConfig `json:"psql"`
-	DBType `yaml:"dbType"`
-	Server ServerConf `yaml:"server"`
+	Logger     LoggerConf `yaml:"logger"`
+	PSQL       PSQLConfig `json:"psql"`
+	DBType     `yaml:"dbType"`
+	Server     ServerConf     `yaml:"server"`
+	GRPSServer GRPSServerConf `yaml:"grpsServer"`
 }
 
 type ServerConf struct {
+	Port int    `yaml:"port"`
+	Host string `yaml:"host"`
+}
+
+type GRPSServerConf struct {
 	Port int    `yaml:"port"`
 	Host string `yaml:"host"`
 }

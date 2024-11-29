@@ -13,17 +13,13 @@ func TestStorage(t *testing.T) {
 	s := New()
 
 	t.Run("add", func(t *testing.T) {
-		var (
-			des       = "Description_1"
-			sb  int64 = 18000
-		)
 		id, err := s.Add(context.TODO(), storage.Event{
 			Title:       "Title_1",
 			StartAt:     time.Now(),
 			EndAt:       time.Now().Add(10 * time.Hour),
-			Description: &des,
+			Description: "Description_1",
 			OwnerID:     1,
-			SendBefore:  &sb,
+			SendBefore:  18000,
 		})
 		require.NoError(t, err)
 		require.Equal(t, uint64(1), id)
@@ -32,27 +28,23 @@ func TestStorage(t *testing.T) {
 			Title:       "Title_2",
 			StartAt:     time.Now().Add(1 * time.Hour),
 			EndAt:       time.Now().Add(10 * time.Hour),
-			Description: nil,
+			Description: "",
 			OwnerID:     2,
-			SendBefore:  nil,
+			SendBefore:  0,
 		})
 		require.NoError(t, err)
 		require.Equal(t, uint64(2), id)
 	})
 
 	t.Run("update", func(t *testing.T) {
-		var (
-			des       = "Description_3"
-			sb  int64 = 10000
-		)
 		err := s.Update(context.TODO(), storage.Event{
 			ID:          1,
 			Title:       "Title_3",
 			StartAt:     time.Now().Add(2 * time.Hour),
 			EndAt:       time.Now().Add(10 * time.Hour),
-			Description: &des,
+			Description: "Description_3",
 			OwnerID:     10,
-			SendBefore:  &sb,
+			SendBefore:  10000,
 		})
 		require.NoError(t, err)
 
@@ -60,12 +52,13 @@ func TestStorage(t *testing.T) {
 			Title:       "Title_2",
 			StartAt:     time.Now().Add(1 * time.Hour),
 			EndAt:       time.Now().Add(10 * time.Hour),
-			Description: nil,
+			Description: "",
 			OwnerID:     11,
-			SendBefore:  nil,
+			SendBefore:  0,
 		})
 		require.Error(t, err)
 	})
+
 	t.Run("list", func(t *testing.T) {
 		list, err := s.List(context.TODO(), storage.Params{})
 		require.NoError(t, err)
@@ -73,16 +66,16 @@ func TestStorage(t *testing.T) {
 
 		item0 := list[0]
 		require.Equal(t, "Title_2", item0.Title)
-		require.Nil(t, item0.Description)
+		require.Equal(t, "", item0.Description)
 		require.Equal(t, uint64(2), item0.OwnerID)
-		require.Nil(t, item0.SendBefore)
+		require.Equal(t, int64(0), item0.SendBefore)
 
 		item1 := list[1]
 		require.Equal(t, uint64(1), item1.ID)
 		require.Equal(t, "Title_3", item1.Title)
-		require.Equal(t, "Description_3", *item1.Description)
+		require.Equal(t, "Description_3", item1.Description)
 		require.Equal(t, uint64(10), item1.OwnerID)
-		require.Equal(t, int64(10000), *item1.SendBefore)
+		require.Equal(t, int64(10000), item1.SendBefore)
 
 		require.True(t, item0.StartAt.Before(item1.StartAt))
 

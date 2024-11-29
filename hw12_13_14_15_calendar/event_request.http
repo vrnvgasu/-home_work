@@ -1,0 +1,40 @@
+### Create
+POST http://localhost:8090/api/events
+Content-Type: application/json
+
+{
+  "title": "http_test",
+  "startAt": "2023-03-12T00:00:00Z",
+  "endAt": "2023-04-12T00:00:00Z",
+  "description": "description",
+  "ownerId": 1,
+  "sendBefore": 10000
+}
+
+###
+
+### Update
+PUT http://localhost:8090/api/events
+Content-Type: application/json
+
+{
+  "id": 1,
+  "title": "http_test",
+  "startAt": "2023-03-12T00:00:00Z",
+  "endAt": "2023-04-12T00:00:00Z",
+  "description": "description",
+  "ownerId": 1,
+  "sendBefore": 10000
+}
+
+###
+
+### List
+GET http://localhost:8090/api/events
+Content-Type: application/json
+
+{
+    "startAtGEq": "2023-03-12T00:00:00Z"
+}
+
+###
