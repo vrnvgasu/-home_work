@@ -61,6 +61,9 @@ func (s *Storage) List(_ context.Context, params storage.Params) ([]storage.Even
 		if event.StartAt.Before(params.StartAtGEq) {
 			continue
 		}
+		if !params.StartAtLEq.IsZero() && event.StartAt.After(params.StartAtLEq) {
+			continue
+		}
 
 		result = append(result, event)
 	}

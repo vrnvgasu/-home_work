@@ -66,6 +66,13 @@ func (s *Storage) List(ctx context.Context, params storage.Params) ([]storage.Ev
 		q += ` where start_at >= :start_at_g_eq `
 	}
 
+	if !params.StartAtLEq.IsZero() {
+		if !params.StartAtGEq.IsZero() {
+			q += ` and `
+		}
+		q += ` start_at <= :start_at_l_eq `
+	}
+
 	q += " order by start_at"
 
 	if params.Limit > 0 {

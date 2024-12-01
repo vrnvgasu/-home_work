@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -11,6 +12,7 @@ import (
 	"github.com/vrnvgasu/home_work/hw12_13_14_15_calendar/internal/app"
 	"github.com/vrnvgasu/home_work/hw12_13_14_15_calendar/internal/config"
 	"github.com/vrnvgasu/home_work/hw12_13_14_15_calendar/internal/logger"
+	internalgrpc "github.com/vrnvgasu/home_work/hw12_13_14_15_calendar/internal/server/grpc"
 	internalhttp "github.com/vrnvgasu/home_work/hw12_13_14_15_calendar/internal/server/http"
 	storageimp "github.com/vrnvgasu/home_work/hw12_13_14_15_calendar/internal/storage/impl"
 )
@@ -34,7 +36,7 @@ func main() {
 	config.Cfg = config.NewConfig(configFile)
 	logg := logger.New(config.Cfg.Logger.Level)
 
-	/////////// storage
+	// storage
 	storage, err := storageimp.NewIStorage()
 	if err != nil {
 		logg.Error("create storage failed" + err.Error())
@@ -57,6 +59,8 @@ func main() {
 	calendar := app.New(logg, storage)
 
 	server := internalhttp.NewServer(logg, calendar)
+	// TODO поменять на calendar (передаем app)
+	grpcServer := internalgrpc.NewServer(logg, calendar)
 
 	ctx, cancel := signal.NotifyContext(context.Background(),
 		syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
@@ -71,13 +75,29 @@ func main() {
 		if err := server.Stop(ctx); err != nil {
 			logg.Error("failed to stop http server: " + err.Error())
 		}
+
+		if err := grpcServer.Stop(); err != nil {
+			logg.Error("failed to stop grpc server: " + err.Error())
+		}
 	}()
 
 	logg.Info("calendar is running...")
 
-	if err := server.Start(ctx); err != nil {
-		logg.Error("failed to start http server: " + err.Error())
-		cancel()
-		os.Exit(1) //nolint:gocritic
-	}
+	go func() {
+		if err := server.Start(ctx); err != nil {
+			logg.Error("failed to start http server: " + err.Error())
+			cancel()
+			os.Exit(1)
+		}
+	}()
+	go func() {
+		if err := grpcServer.Start(ctx); err != nil {
+			logg.Error("failed to start grpc server: " + err.Error())
+			cancel()
+			os.Exit(1)
+		}
+	}()
+
+	<-ctx.Done()
+	fmt.Println("shutting down http server...")
 }
