@@ -80,7 +80,7 @@ func main() {
 		}
 	}()
 
-	logg.Info("calendar is running...")
+	logg.Info(fmt.Sprintf("calendar is running on %s:%d ...", config.Cfg.Server.Host, config.Cfg.Server.Port))
 
 	go func() {
 		if err := server.Start(ctx); err != nil {

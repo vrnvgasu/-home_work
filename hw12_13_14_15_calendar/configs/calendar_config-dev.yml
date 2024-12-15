@@ -2,15 +2,15 @@ logger:
   level: DEBUG
 
 psql:
-  dsn: "host=localhost port=10905 user=user password=qwerty dbname=otus_calendar sslmode=disable"
+  dsn: "host=postgres port=5432 user=user password=qwerty dbname=otus_calendar sslmode=disable"
   migration: migrations
 
 dbType: sql
 
 server:
   port: 8090
-  host: localhost
+  host: calendar
 
 grpsServer:
   port: 50051
-  host: localhost
+  host: calendar

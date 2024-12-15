@@ -17,7 +17,6 @@ type Logger interface {
 type App interface {
 	EventList(ctx context.Context, params storage.Params) ([]storage.Event, error)
 	EventListToSend(ctx context.Context) ([]storage.Event, error)
-	SetEventsSent(ctx context.Context, eventIDs []uint64) error
 	DeleteEventList(ctx context.Context, eventIDs []uint64) error
 }
 
@@ -69,7 +68,7 @@ func (s *Scheduler) Run(ctx context.Context) error {
 
 func (s *Scheduler) clearOldEvents(ctx context.Context) error {
 	events, err := s.app.EventList(ctx, storage.Params{
-		StartAtLEq: time.Now().Add(-1 * s.eventsLifeTime),
+		StartAtLEq: time.Now().Add(-1 * s.eventsLifeTime * time.Second), //nolint:durationcheck
 	})
 	if err != nil {
 		s.logger.Error("scheduler clearOldEvents EventList: " + err.Error())
@@ -123,14 +122,6 @@ func (s *Scheduler) sendEvents(ctx context.Context) error {
 		s.logger.Error("scheduler eventsToSend Publish: " + err.Error())
 
 		return err
-	}
-
-	ids := make([]uint64, 0, len(events))
-	for _, event := range events {
-		ids = append(ids, event.ID)
-	}
-	if err = s.app.SetEventsSent(ctx, ids); err != nil {
-		s.logger.Error("scheduler eventsToSend SetEventsSent: " + err.Error())
 	}
 
 	return nil
