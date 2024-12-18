@@ -1,8 +1,43 @@
-version: "3.9"
+version: '3.8'
+name: 'otus-calendar'
+
 services:
+  calendar:
+    build:
+      dockerfile: ./build/Dockerfile_calendar
+      context: ../
+    depends_on:
+      - postgres
+    restart: on-failure
+    ports:
+      - 8090:8090
+      - 50051:50051
+    networks:
+      - otus-network
+  calendar-scheduler:
+    build:
+      dockerfile: ./build/Dockerfile_calendar_scheduler
+      context: ../
+    depends_on:
+      - postgres
+      - rabbitmq
+    restart: on-failure
+    networks:
+      - otus-network
+  calendar-sender:
+    build:
+      dockerfile: ./build/Dockerfile_calendar_sender
+      context: ../
+    depends_on:
+      - rabbitmq
+    restart: on-failure
+    networks:
+      - otus-network
   postgres:
     container_name: db_otus_calendar
     image: postgres
+    build:
+      context: ../
     environment:
       POSTGRES_DB: "otus_calendar"
       POSTGRES_USER: "user"
@@ -11,9 +46,18 @@ services:
       - "10905:5432"
     restart: unless-stopped
     volumes:
-      - ./../data:/var/lib/postgresql/data
+      - ./../data/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: [ 'CMD-SHELL', 'pg_isready' ]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+    networks:
+      - otus-network
   rabbitmq:
     image: rabbitmq:3-management
+    build:
+      context: ../
     ports:
       - 5672:5672
       - 15672:15672
@@ -21,3 +65,14 @@ services:
       - RABBITMQ_DEFAULT_VHOST=local
     volumes:
       - ./../data/rabbitmq_data:/data'
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 60s
+      retries: 3
+    networks:
+      - otus-network
+
+networks:
+  otus-network:
+    driver: bridge
